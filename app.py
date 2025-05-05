@@ -1,3 +1,11 @@
+"""
+Book Alchemy Flask Application.
+
+This Flask app allows users to manage a personal digital library with books and authors.
+Users can add, delete, rate, and view details of books and authors, and the app includes
+search, sort, and filter functionalities.
+"""
+
 import os
 from datetime import datetime
 
@@ -7,18 +15,25 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from data_models import db, Author, Book
 
+# Initialize Flask application
 app = Flask(__name__)
 app.secret_key = "supersecretpassword123"
 
+# Configure SQLite database
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, 'data', 'library.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
-
 db.init_app(app)
 
 
 @app.route("/")
 def home():
+    """
+    Display the home page with a list of books.
+
+    Supports sorting by title or author, ascending or descending,
+    and filtering by search query.
+    """
     sort = request.args.get("sort", "title")
     direction = request.args.get("direction", "asc")
     q = request.args.get("q", "").strip()
@@ -35,17 +50,20 @@ def home():
 
     if sort == "author":
         order = asc(Author.name) if direction == "asc" else desc(Author.name)
-        query = query.order_by(order)
     else:
         order = asc(Book.title) if direction == "asc" else desc(Book.title)
-        query = query.order_by(order)
 
-    books = query.all()
+    books = query.order_by(order).all()
     return render_template("home.html", books=books, sort=sort, direction=direction)
 
 
 @app.route("/add_author", methods=["GET", "POST"])
 def add_author():
+    """
+    Display and handle the form to add a new author.
+
+    Validates date fields and commits to the database.
+    """
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         try:
@@ -68,6 +86,11 @@ def add_author():
 
 @app.route("/add_book", methods=["GET", "POST"])
 def add_book():
+    """
+    Display and handle the form to add a new book.
+
+    Validates all input fields including ISBN, publication year, author, and rating.
+    """
     if request.method == "POST":
         try:
             isbn = request.form.get("isbn", "").strip()
@@ -76,7 +99,6 @@ def add_book():
                 raise ValueError("Invalid ISBN length.")
 
             title = request.form.get("title", "").strip()
-
             publication_year = int(request.form.get("publication_year", "").strip())
             current_year = datetime.now().year
             if publication_year < 1400 or publication_year > current_year:
@@ -122,6 +144,11 @@ def add_book():
 
 @app.route("/book/<int:book_id>/delete", methods=["POST"])
 def delete_book(book_id):
+    """
+    Delete a book from the database.
+
+    Also deletes the author if the book was their only one.
+    """
     book = Book.query.get_or_404(book_id)
     author = book.author
 
@@ -138,6 +165,9 @@ def delete_book(book_id):
 
 @app.route("/author/<int:author_id>/delete", methods=["POST"])
 def delete_author(author_id):
+    """
+    Delete an author and all their associated books from the database.
+    """
     author = Author.query.get_or_404(author_id)
     for book in author.books:
         db.session.delete(book)
@@ -149,18 +179,29 @@ def delete_author(author_id):
 
 @app.route("/book/<int:book_id>")
 def book_detail(book_id):
+    """
+    Display a detail page for a specific book.
+    """
     book = Book.query.get_or_404(book_id)
     return render_template("book_detail.html", book=book)
 
 
 @app.route("/author/<int:author_id>")
 def author_detail(author_id):
+    """
+    Display a detail page for a specific author.
+    """
     author = Author.query.get_or_404(author_id)
     return render_template("author_detail.html", author=author)
 
 
 @app.route("/book/<int:book_id>/rating", methods=["GET", "POST"])
 def rate_book(book_id):
+    """
+    Display and handle form to rate or update the rating of a book.
+
+    Only accepts values between 1 and 10.
+    """
     book = Book.query.get_or_404(book_id)
     if request.method == "POST":
         rating = request.form.get("rating", "").strip()
