@@ -1,30 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Add an Author</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="container my-5">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">📚 My Library</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/add_book">Add Book</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/add_author">Add Author</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<h1 class="mb-4">🖊️ Add a New Author</h1>
+
 {% with messages = get_flashed_messages() %}
 {% if messages %}
-<ul>
+<div class="alert alert-success">
     {% for message in messages %}
-    <li>{{ message }}</li>
+    <p class="mb-0">{{ message }}</p>
     {% endfor %}
-</ul>
+</div>
 {% endif %}
 {% endwith %}
-<form action="/add_author" method="POST">
-    <label for="name">Author Name:</label>
-    <input type="text" id="name" name="name" required><br><br>
 
-    <label for="birthdate">Birthdate:</label>
-    <input type="date" id="birthdate" name="birthdate" required><br><br>
-    <label for="date_of_death">Date of Death:</label>
-    <input type="date" id="date_of_death" name="date_of_death"><br><br>
-    <input type="submit" value="Add Author">
+<form action="/add_author" method="POST" class="row g-3">
+    <div class="col-md-6">
+        <label for="name" class="form-label">Author Name</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+
+    <div class="col-md-6">
+        <label for="birthdate" class="form-label">Birthdate</label>
+        <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+    </div>
+
+    <div class="col-md-6">
+        <label for="date_of_death" class="form-label">Date of Death</label>
+        <input type="date" class="form-control" id="date_of_death" name="date_of_death">
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-success">Add Author</button>
+    </div>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
