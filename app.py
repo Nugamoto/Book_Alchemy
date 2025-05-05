@@ -24,10 +24,8 @@ def home():
     direction = request.args.get("direction", "asc")
     q = request.args.get("q", "").strip()
 
-    # Query starten mit Join
     query = Book.query.join(Author)
 
-    # Suche nach Titel ODER Autorname
     if q:
         query = query.filter(
             or_(
@@ -36,7 +34,6 @@ def home():
             )
         )
 
-    # Sortierung anwenden
     if sort == "author":
         order = asc(Author.name) if direction == "asc" else desc(Author.name)
         query = query.order_by(order)
@@ -83,6 +80,23 @@ def add_book():
 
     authors = Author.query.all()
     return render_template("add_book.html", authors=authors)
+
+
+@app.route("/book/<int:book_id>/delete", methods=["POST"])
+def delete_book(book_id):
+    book = Book.query.get_or_404(book_id)
+    author = book.author
+
+    db.session.delete(book)
+    db.session.commit()
+    if not author.books:
+        db.session.delete(author)
+        db.session.commit()
+        flash(f"Book and author '{author.name}' deleted.")
+    else:
+        flash(f"Book '{book.title}' deleted.")
+
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":
