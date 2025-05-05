@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from flask import Flask, request, flash, redirect, render_template, url_for
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, or_
 
 from data_models import db, Author, Book
 
@@ -22,13 +22,29 @@ db.init_app(app)
 def home():
     sort = request.args.get("sort", "title")
     direction = request.args.get("direction", "asc")
+    q = request.args.get("q", "").strip()
 
+    # Query starten mit Join
+    query = Book.query.join(Author)
+
+    # Suche nach Titel ODER Autorname
+    if q:
+        query = query.filter(
+            or_(
+                Book.title.ilike(f"%{q}%"),
+                Author.name.ilike(f"%{q}%")
+            )
+        )
+
+    # Sortierung anwenden
     if sort == "author":
         order = asc(Author.name) if direction == "asc" else desc(Author.name)
-        books = Book.query.join(Author).order_by(order).all()
+        query = query.order_by(order)
     else:
         order = asc(Book.title) if direction == "asc" else desc(Book.title)
-        books = Book.query.order_by(order).all()
+        query = query.order_by(order)
+
+    books = query.all()
 
     return render_template("home.html", books=books, sort=sort, direction=direction)
 

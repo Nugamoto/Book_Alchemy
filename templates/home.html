@@ -23,6 +23,12 @@
   <input type="submit" value="Sort">
 </form>
 
+<form method="get" action="/">
+  <label for="q">Search by title or author:</label>
+  <input type="text" id="q" name="q" value="{{ request.args.get('q', '') }}">
+  <input type="submit" value="Search">
+</form>
+
 {% for book in books %}
 <div>
     <h3>{{ book.title }}</h3>
