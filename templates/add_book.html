@@ -1,15 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  </head>
-  <body>
+</head>
+<body>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+<form action="/add_book" method="POST">
 
-  <form action="/add_author" method="POST">
-  <!-- Add the form here -->
-  </form>
+    <label for="isbn">Book ISBN:</label>
+    <input type="text" id="isbn" name="isbn" required><br><br>
 
-  </body>
+    <label for="title">Book Title:</label>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="publication_year">Publication Year:</label>
+    <input type="text" id="publication_year" name="publication_year" required><br><br>
+    <select name="author_id">
+        {% for author in authors %}
+        <option value="{{ author.id }}">{{ author.name }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Add Book">
+</form>
+</body>
 </html>

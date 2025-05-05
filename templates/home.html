@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  </head>
-  <body>
+</head>
+<body>
 
-    {% for book in books %}
-    <div> <h3>{{ book.title }}</h3>
-    </div>
-    {% endfor %}
+{% for book in books %}
+<div>
+    <h3>{{ book.title }}</h3>
+    <p><strong>Author:</strong> {{ book.author.name }}</p>
+</div>
+{% endfor %}
 
-  </body>
+</body>
 </html>

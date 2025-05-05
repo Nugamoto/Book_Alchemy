@@ -3,7 +3,7 @@ from datetime import datetime
 
 from flask import Flask, request, flash, redirect, render_template, url_for
 
-from data_models import db, Author
+from data_models import db, Author, Book
 
 app = Flask(__name__)
 app.secret_key = "supergeheimespasswort123"
@@ -15,6 +15,12 @@ db_path = os.path.join(basedir, 'data', 'library.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 
 db.init_app(app)
+
+
+@app.route("/")
+def home():
+    books = Book.query.all()
+    return render_template("home.html", books=books)
 
 
 @app.route("/add_author", methods=["GET", "POST"])
@@ -33,6 +39,24 @@ def add_author():
         return redirect(url_for("add_author"))
 
     return render_template("add_author.html")
+
+
+@app.route("/add_book", methods=["GET", "POST"])
+def add_book():
+    if request.method == "POST":
+        isbn = request.form.get("isbn", "").strip()
+        title = request.form.get("title", "").strip()
+        publication_year = int(request.form.get("publication_year", "").strip())
+        author_id = int(request.form.get("author_id", "").strip())
+        book = Book(isbn=isbn, title=title, publication_year=publication_year, author_id=author_id)
+
+        db.session.add(book)
+        db.session.commit()
+        flash("Book successfully added!")
+        return redirect(url_for("add_book"))
+
+    authors = Author.query.all()
+    return render_template("add_book.html", authors=authors)
 
 
 if __name__ == "__main__":
