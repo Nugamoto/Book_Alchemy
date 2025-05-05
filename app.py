@@ -99,5 +99,17 @@ def delete_book(book_id):
     return redirect(url_for("home"))
 
 
+@app.route("/book/<int:book_id>")
+def book_detail(book_id):
+    book = Book.query.get_or_404(book_id)
+    return render_template("book_detail.html", book=book)
+
+
+@app.route("/author/<int:author_id>")
+def author_detail(author_id):
+    author = Author.query.get_or_404(author_id)
+    return render_template("author_detail.html", author=author)
+
+
 if __name__ == "__main__":
     app.run(debug=True)

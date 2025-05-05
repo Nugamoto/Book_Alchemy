@@ -81,7 +81,9 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title">{{ book.title }}</h5>
+                        <h5 class="card-title">
+                            <a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a>
+                        </h5>
                         <p class="card-text"><strong>Author:</strong> {{ book.author.name }}</p>
                         <form action="{{ url_for('delete_book', book_id=book.id) }}" method="post" class="d-inline">
                             <button type="submit" class="btn btn-danger btn-sm"
