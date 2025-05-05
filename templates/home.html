@@ -7,6 +7,22 @@
 </head>
 <body>
 
+<form method="get" action="/">
+  <label for="sort">Sort by:</label>
+  <select name="sort" id="sort">
+    <option value="title" {% if sort == 'title' %}selected{% endif %}>Title</option>
+    <option value="author" {% if sort == 'author' %}selected{% endif %}>Author</option>
+  </select>
+
+  <label for="direction">Direction:</label>
+  <select name="direction" id="direction">
+    <option value="asc" {% if direction == 'asc' %}selected{% endif %}>Ascending</option>
+    <option value="desc" {% if direction == 'desc' %}selected{% endif %}>Descending</option>
+  </select>
+
+  <input type="submit" value="Sort">
+</form>
+
 {% for book in books %}
 <div>
     <h3>{{ book.title }}</h3>

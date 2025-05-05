@@ -2,11 +2,12 @@ import os
 from datetime import datetime
 
 from flask import Flask, request, flash, redirect, render_template, url_for
+from sqlalchemy import asc, desc
 
 from data_models import db, Author, Book
 
 app = Flask(__name__)
-app.secret_key = "supergeheimespasswort123"
+app.secret_key = "supersecretpassword123"
 
 # absolute path
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -19,8 +20,17 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-    books = Book.query.all()
-    return render_template("home.html", books=books)
+    sort = request.args.get("sort", "title")
+    direction = request.args.get("direction", "asc")
+
+    if sort == "author":
+        order = asc(Author.name) if direction == "asc" else desc(Author.name)
+        books = Book.query.join(Author).order_by(order).all()
+    else:
+        order = asc(Book.title) if direction == "asc" else desc(Book.title)
+        books = Book.query.order_by(order).all()
+
+    return render_template("home.html", books=books, sort=sort, direction=direction)
 
 
 @app.route("/add_author", methods=["GET", "POST"])
