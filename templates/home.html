@@ -85,6 +85,13 @@
                             <a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a>
                         </h5>
                         <p class="card-text"><strong>Author:</strong> {{ book.author.name }}</p>
+                        <form action="{{ url_for('delete_author', author_id=book.author.id) }}" method="post"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-warning btn-sm"
+                                    onclick="return confirm('Are you sure you want to delete this author and all their books?');">
+                                Delete Author
+                            </button>
+                        </form>
                         <form action="{{ url_for('delete_book', book_id=book.id) }}" method="post" class="d-inline">
                             <button type="submit" class="btn btn-danger btn-sm"
                                     onclick="return confirm('Delete this book?')">

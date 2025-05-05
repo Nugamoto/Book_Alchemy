@@ -99,6 +99,20 @@ def delete_book(book_id):
     return redirect(url_for("home"))
 
 
+@app.route("/author/<int:author_id>/delete", methods=["POST"])
+def delete_author(author_id):
+    author = Author.query.get_or_404(author_id)
+
+    for book in author.books:
+        db.session.delete(book)
+
+    db.session.delete(author)
+    db.session.commit()
+
+    flash(f"Author '{author.name}' and all their books have been deleted.")
+    return redirect(url_for("home"))
+
+
 @app.route("/book/<int:book_id>")
 def book_detail(book_id):
     book = Book.query.get_or_404(book_id)
