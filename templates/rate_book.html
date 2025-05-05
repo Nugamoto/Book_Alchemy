@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Rate {{ book.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container my-5">
+
+<h1 class="mb-4">Rate: {{ book.title }}</h1>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="alert alert-info">
+    {% for message in messages %}
+    <p class="mb-0">{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<form method="post" class="row g-3">
+    <div class="col-md-4">
+        <label for="rating" class="form-label">Enter a rating (1–10):</label>
+        <input type="number" class="form-control" id="rating" name="rating" min="1" max="10" required>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-success">Save Rating</button>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+</body>
+</html>

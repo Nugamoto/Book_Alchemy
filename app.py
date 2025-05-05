@@ -71,8 +71,16 @@ def add_book():
         title = request.form.get("title", "").strip()
         publication_year = int(request.form.get("publication_year", "").strip())
         author_id = int(request.form.get("author_id", "").strip())
-        book = Book(isbn=isbn, title=title, publication_year=publication_year, author_id=author_id)
+        rating = request.form.get("rating", "").strip()
+        rating = int(rating) if rating.isdigit() else None
 
+        book = Book(
+            isbn=isbn,
+            title=title,
+            publication_year=publication_year,
+            author_id=author_id,
+            rating=rating
+        )
         db.session.add(book)
         db.session.commit()
         flash("Book successfully added!")
@@ -123,6 +131,23 @@ def book_detail(book_id):
 def author_detail(author_id):
     author = Author.query.get_or_404(author_id)
     return render_template("author_detail.html", author=author)
+
+
+@app.route("/book/<int:book_id>/rating", methods=["GET", "POST"])
+def rate_book(book_id):
+    book = Book.query.get_or_404(book_id)
+
+    if request.method == "POST":
+        rating = request.form.get("rating", "").strip()
+        if rating.isdigit() and 1 <= int(rating) <= 10:
+            book.rating = int(rating)
+            db.session.commit()
+            flash(f"Rating for '{book.title}' was updated to {book.rating}/10.")
+            return redirect(url_for("home"))
+        else:
+            flash("Please enter a valid rating from 1 to 10.")
+
+    return render_template("rate_book.html", book=book)
 
 
 if __name__ == "__main__":

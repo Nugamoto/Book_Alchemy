@@ -85,6 +85,9 @@
                             <a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a>
                         </h5>
                         <p class="card-text"><strong>Author:</strong> {{ book.author.name }}</p>
+                        {% if book.rating %}
+                        <p class="card-text"><strong>Rating:</strong> {{ book.rating }}/10</p>
+                        {% endif %}
                         <form action="{{ url_for('delete_author', author_id=book.author.id) }}" method="post"
                               class="d-inline">
                             <button type="submit" class="btn btn-warning btn-sm"
@@ -98,6 +101,15 @@
                                 Delete Book
                             </button>
                         </form>
+                        {% if book.rating is not none %}
+                        <form action="{{ url_for('rate_book', book_id=book.id) }}" method="get" class="d-inline">
+                            <button type="submit" class="btn btn-info btn-sm">Update Rating</button>
+                        </form>
+                        {% else %}
+                        <form action="{{ url_for('rate_book', book_id=book.id) }}" method="get" class="d-inline">
+                            <button type="submit" class="btn btn-outline-info btn-sm">Add Rating</button>
+                        </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>
